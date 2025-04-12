@@ -13,7 +13,7 @@ Assets = {
   Asset('IMAGE', 'images/shadowbuttonoff.tex'),
 }
 
---shadows constantly change transparency, so we have to overwrite some functions so they stay invisible when they should
+-- shadows constantly change transparency, so we have to overwrite some functions so they stay invisible when they should
 AddClassPostConstruct('components/transparentonsanity', function(self)
   local function PushAlpha(self, alpha, most_alpha)
     if G.ThePlayer ~= nil and G.ThePlayer.is_shadow_enabled == false then
@@ -43,10 +43,10 @@ end)
 
 AddClassPostConstruct('widgets/controls', function(self)
   G.ThePlayer.is_shadow_enabled = true
-  if GetModConfigData('buttonEnabled') then
-    self.shadowtogglewidget = self:AddChild(ShadowToggleWidget(self.owner))
-    self.shadowtogglewidget:MoveToBack()
-  end
+  self.shadowtogglewidget = self:AddChild(ShadowToggleWidget(self.owner))
+  self.shadowtogglewidget:MoveToBack()
+  self.shadowtogglewidget.should_show = GetModConfigData('show_button_widget')
+  self.shadowtogglewidget:Hide()
 end)
 
 local function InGame() return G.ThePlayer and G.ThePlayer.HUD and not G.ThePlayer.HUD:HasInputFocus() end

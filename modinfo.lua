@@ -1,5 +1,5 @@
 name = 'Shadow Creature Toggle'
-description = 'Allows you to turn off shadows once you equip the bone helm'
+description = 'Turn off shadow creatures, by clicking button or pressing key.'
 author = 'splorange, liolok'
 version = '1.1'
 api_version = 10
@@ -40,8 +40,9 @@ end
 
 configuration_options = {
   {
-    name = 'buttonEnabled',
-    label = 'Button Enabled',
+    name = 'show_button_widget',
+    label = 'Show Button',
+    hover = 'Button only shows up when wearing Bone Helm or during wereforms of Shadow Aligned Woodie.',
     options = {
       { description = 'Yes', data = true },
       { description = 'No', data = false },
@@ -51,7 +52,7 @@ configuration_options = {
   {
     name = 'keybind',
     label = 'Toggle Key',
-    hover = 'Only works when wearing Bone Helm or during Wereforms of Shadow Aligned Woodie.',
+    hover = 'Always works so turn off with caution.',
     options = keys,
     default = 'KEY_DISABLED',
   },

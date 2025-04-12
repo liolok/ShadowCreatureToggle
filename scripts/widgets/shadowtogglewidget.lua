@@ -16,9 +16,7 @@ local function IsWearingSkeletonHat()
   return head_item and head_item.prefab == 'skeletonhat'
 end
 
-local function IsShadowWereWoodie()
-  return ThePlayer:HasTag('wereplayer') and ThePlayer:HasTag('player_shadow_aligned')
-end
+local function IsShadowWereWoodie() return ThePlayer:HasTag('wereplayer') and ThePlayer:HasTag('player_shadow_aligned') end
 
 local ShadowToggleWidget = Class(Widget, function(self, owner)
   Widget._ctor(self, 'ShadowToggleWidget')
@@ -51,7 +49,7 @@ end)
 
 function ShadowToggleWidget:OnUpdate(dt)
   if IsWearingSkeletonHat() or IsShadowWereWoodie() then
-    self.bg:Show()
+    if self.should_show then self.bg:Show() end
   else
     self.bg:Hide()
     if ThePlayer.is_shadow_enabled == false then
