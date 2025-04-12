@@ -11,18 +11,13 @@ Assets = {
   Asset('IMAGE', 'images/shadowbuttonoff.tex'),
 }
 
-local function CheckForSkeletonHat()
-  local head_item
-  if EQUIPSLOTS.HEAD then
-    head_item = ThePlayer.replica.inventory:GetEquippedItem(EQUIPSLOTS.HEAD)
-  else
-    head_item = ThePlayer.replica.inventory:GetEquippedItem(EQUIPSLOTS.HAT)
-  end
-  if head_item and head_item.prefab == 'skeletonhat' then
-    return true
-  else
-    return false
-  end
+local function IsWearingSkeletonHat()
+  local head_item = ThePlayer.replica.inventory:GetEquippedItem(EQUIPSLOTS.HEAD or EQUIPSLOTS.HAT)
+  return head_item and head_item.prefab == 'skeletonhat'
+end
+
+local function IsShadowWereWoodie()
+  return ThePlayer:HasTag('wereplayer') and ThePlayer:HasTag('player_shadow_aligned')
 end
 
 local ShadowToggleWidget = Class(Widget, function(self, owner)
@@ -47,25 +42,27 @@ local ShadowToggleWidget = Class(Widget, function(self, owner)
 
   self:StartUpdating()
 
-  self.button:SetOnClick(function() self:OnClickButton() end)
+  self.button:SetOnClick(function()
+    ThePlayer.is_shadow_enabled = not ThePlayer.is_shadow_enabled
+    if ThePlayer.is_shadow_enabled == true then ThePlayer:PushEvent('TurnOnShadows') end
+    if ThePlayer.is_shadow_enabled == false then ThePlayer:PushEvent('TurnOffShadows') end
+  end)
 end)
 
-function ShadowToggleWidget:OnClickButton()
-  ThePlayer.hasshadowsenabled = not ThePlayer.hasshadowsenabled
-  if ThePlayer.hasshadowsenabled == true then ThePlayer:PushEvent('TurnOnShadows') end
-  if ThePlayer.hasshadowsenabled == false then ThePlayer:PushEvent('TurnOffShadows') end
-end
-
 function ShadowToggleWidget:OnUpdate(dt)
-  if CheckForSkeletonHat() == true then
+  if IsWearingSkeletonHat() or IsShadowWereWoodie() then
     self.bg:Show()
   else
     self.bg:Hide()
-    if ThePlayer.hasshadowsenabled == false then
-      ThePlayer.hasshadowsenabled = true
+    if ThePlayer.is_shadow_enabled == false then
+      ThePlayer.is_shadow_enabled = true
       ThePlayer:PushEvent('TurnOnShadows')
-      self.buttonOverlay:Show()
     end
+  end
+  if ThePlayer.is_shadow_enabled then
+    self.buttonOverlay:Show()
+  else
+    self.buttonOverlay:Hide()
   end
 
   local item = ThePlayer.replica.inventory:GetEquippedItem(EQUIPSLOTS.BACK or EQUIPSLOTS.BODY)
