@@ -1,7 +1,8 @@
-local ShadowToggleWidget = require('widgets/shadowtogglewidget')
-local shadowcreatures = { 'crawlinghorror', 'terrorbeak', 'crawlingnightmare', 'nightmarebeak' }
+modimport('keybind')
 
-local buttonEnabled = GetModConfigData('buttonEnabled')
+local ShadowToggleWidget = require('widgets/shadowtogglewidget')
+local SHADOW_CREATURES = { 'crawlinghorror', 'terrorbeak', 'crawlingnightmare', 'nightmarebeak' }
+local G = GLOBAL
 
 Assets = {
   Asset('ATLAS', 'images/shadowbuttonbackground.xml'),
@@ -12,24 +13,10 @@ Assets = {
   Asset('IMAGE', 'images/shadowbuttonoff.tex'),
 }
 
-local function CheckForSkeletonHat()
-  local head_item
-  if GLOBAL.EQUIPSLOTS.HEAD then
-    head_item = GLOBAL.ThePlayer.replica.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HEAD)
-  else
-    head_item = GLOBAL.ThePlayer.replica.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HAT)
-  end
-  if head_item and head_item.prefab == 'skeletonhat' then
-    return true
-  else
-    return false
-  end
-end
-
 --shadows constantly change transparency, so we have to overwrite some functions so they stay invisible when they should
 AddClassPostConstruct('components/transparentonsanity', function(self)
   local function PushAlpha(self, alpha, most_alpha)
-    if GLOBAL.ThePlayer ~= nil and GLOBAL.ThePlayer.hasshadowsenabled == false then
+    if G.ThePlayer ~= nil and G.ThePlayer.is_shadow_enabled == false then
       self.inst.AnimState:OverrideMultColour(1, 1, 1, 0)
       self.inst:Hide()
     else
@@ -55,47 +42,61 @@ AddClassPostConstruct('components/transparentonsanity', function(self)
 end)
 
 AddClassPostConstruct('widgets/controls', function(self)
-  GLOBAL.ThePlayer.hasshadowsenabled = true
-  if buttonEnabled then
+  G.ThePlayer.is_shadow_enabled = true
+  if GetModConfigData('buttonEnabled') then
     self.shadowtogglewidget = self:AddChild(ShadowToggleWidget(self.owner))
     self.shadowtogglewidget:MoveToBack()
-
-    GLOBAL.ThePlayer:ListenForEvent('TurnOnShadows', function() self.shadowtogglewidget.buttonOverlay:Show() end)
-    GLOBAL.ThePlayer:ListenForEvent('TurnOffShadows', function() -- REQUIRE HELMET
-      self.shadowtogglewidget.buttonOverlay:Hide()
-    end)
   end
 end)
 
-local function InGame() return GLOBAL.ThePlayer and GLOBAL.ThePlayer.HUD and not GLOBAL.ThePlayer.HUD:HasInputFocus() end
+local function InGame() return G.ThePlayer and G.ThePlayer.HUD and not G.ThePlayer.HUD:HasInputFocus() end
 
-if GetModConfigData('keybind') and GetModConfigData('keybind') > 0 then -- viktor code :3
-  GLOBAL.TheInput:AddKeyDownHandler(GetModConfigData('keybind'), function()
-    if InGame() and GLOBAL.TheWorld then
-      GLOBAL.ThePlayer.hasshadowsenabled = not GLOBAL.ThePlayer.hasshadowsenabled
-      if GLOBAL.ThePlayer.hasshadowsenabled == true then GLOBAL.ThePlayer:PushEvent('TurnOnShadows') end
-      if GLOBAL.ThePlayer.hasshadowsenabled == false then GLOBAL.ThePlayer:PushEvent('TurnOffShadows') end
-      if GLOBAL.ThePlayer and GLOBAL.ThePlayer.components and GLOBAL.ThePlayer.components.talker then
-        GLOBAL.ThePlayer.components.talker:Say(
-          'BHT: Shadows ' .. (GLOBAL.ThePlayer.hasshadowsenabled and 'Enabled' or 'Disabled')
-        )
-      end
-    end
-  end)
+local function Toggle()
+  local player = G.ThePlayer
+  if not (player and InGame() and G.TheWorld) then return end
+  player.is_shadow_enabled = not player.is_shadow_enabled
+  local enabled = player.is_shadow_enabled
+  if enabled == true then player:PushEvent('TurnOnShadows') end
+  if enabled == false then player:PushEvent('TurnOffShadows') end
+  local talker = player.components and player.components.talker
+  if not talker then return end
+  talker:Say('[Shadow Toggle]: ' .. (enabled and 'On' or 'Off'))
 end
 
-for i, prefab in ipairs(shadowcreatures) do
+local handler = nil -- config name to key event handlers
+
+function KeyBind(_, key)
+  -- disable old binding
+  if handler then
+    handler:Remove()
+    handler = nil
+  end
+
+  -- no binding
+  if not key then return end
+
+  -- new binding
+  if key >= 1000 then -- it's a mouse button
+    handler = G.TheInput:AddMouseButtonHandler(function(button, down, x, y)
+      if button == key and down then Toggle() end
+    end)
+  else -- it's a keyboard key
+    handler = G.TheInput:AddKeyDownHandler(key, Toggle)
+  end
+end
+
+for _, prefab in ipairs(SHADOW_CREATURES) do
   AddPrefabPostInit(prefab, function(inst)
     inst:DoTaskInTime(0, function() --shadows might be initialized before the player
-      if GLOBAL.ThePlayer.hasshadowsenabled == false then
+      if G.ThePlayer.is_shadow_enabled == false then
         inst.AnimState:OverrideMultColour(1, 1, 1, 0)
         inst:Hide()
       end
-      GLOBAL.ThePlayer:ListenForEvent('TurnOnShadows', function()
+      G.ThePlayer:ListenForEvent('TurnOnShadows', function()
         inst.AnimState:OverrideMultColour(1, 1, 1, 0.4)
         inst:Show()
       end)
-      GLOBAL.ThePlayer:ListenForEvent('TurnOffShadows', function()
+      G.ThePlayer:ListenForEvent('TurnOffShadows', function()
         inst.AnimState:OverrideMultColour(1, 1, 1, 0)
         inst:Hide()
       end)
