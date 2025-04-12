@@ -68,21 +68,10 @@ function ShadowToggleWidget:OnUpdate(dt)
     end
   end
 
-  if EQUIPSLOTS.BACK then
-    self.backpack = ThePlayer.replica.inventory:GetEquippedItem(EQUIPSLOTS.BACK)
-  else
-    self.backpack = ThePlayer.replica.inventory:GetEquippedItem(EQUIPSLOTS.BODY)
-  end
-  if
-    self.backpack
-    and self.backpack.replica.container
-    and self.backpack.replica.container._isopen
-    and Profile:GetIntegratedBackpack() == true
-  then
-    self.bg:SetPosition(-280, 125, 0)
-  else
-    self.bg:SetPosition(-280, 85, 0)
-  end
+  local item = ThePlayer.replica.inventory:GetEquippedItem(EQUIPSLOTS.BACK or EQUIPSLOTS.BODY)
+  local is_backpack_open = item and item.replica and item.replica.container and item.replica.container._isopen
+  local y = (is_backpack_open and Profile:GetIntegratedBackpack()) and 125 or 85
+  self.bg:SetPosition(-280, y, 0)
 end
 
 return ShadowToggleWidget
