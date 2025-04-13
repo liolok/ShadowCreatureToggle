@@ -10,13 +10,15 @@ Clicking button or press key to hide these shadow creatures:
 - Crawling Horror
 - Crawling Nightmare
 - Terrorbeak
-- Nightmarebeak]],
+- Nightmarebeak
+- Lurking Nightmare]],
   [[（在装备骨头头盔、或者暗影阵营伍迪变身时）
 点击按钮或者按键可隐藏以下暗影生物：
 - 爬行恐惧
 - 爬行梦魇
 - 恐怖尖喙
-- 梦魇尖喙]]
+- 梦魇尖喙
+- 潜伏梦魇]]
 ) .. '\n󰀰 ' .. date -- Florid Postern（绚丽之门）
 api_version = 10
 dst_compatible = true

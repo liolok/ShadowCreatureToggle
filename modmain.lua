@@ -1,7 +1,7 @@
 local G = GLOBAL
 local U = require('utils/shadowtoggle')
 local ShadowToggleWidget = require('widgets/shadowtogglewidget')
-local SHADOW_CREATURES = { 'crawlinghorror', 'terrorbeak', 'crawlingnightmare', 'nightmarebeak' }
+local SHADOW_CREATURES = { 'crawlinghorror', 'crawlingnightmare', 'terrorbeak', 'nightmarebeak', 'ruinsnightmare' }
 
 modimport('keybind') -- refine key binding UI
 modimport('languages/en') -- load translation strings with English fallback
