@@ -5,11 +5,18 @@ author = T('splorange, liolok', 'splorange、李皓奇')
 local date = '2025-04-13'
 version = date .. '' -- for revision in same day
 description = T(
-  'Clicking button or press key to hide these shadow creatures:',
-  '点击按钮或者按键可隐藏以下暗影生物：'
-) .. '\n- ' .. T('Crawling Horror and Crawling Nightmare', '爬行恐惧、爬行梦魇') .. '\n- ' .. T(
-  'Terrorbeak and Nightmarebeak',
-  '恐怖尖喙、梦魇尖喙'
+  [[(When wearing Bone Helm, or during wereforms of Shadow Aligned Woodie)
+Clicking button or press key to hide these shadow creatures:
+- Crawling Horror
+- Crawling Nightmare
+- Terrorbeak
+- Nightmarebeak]],
+  [[（在装备骨头头盔、或者暗影阵营伍迪变身时）
+点击按钮或者按键可隐藏以下暗影生物：
+- 爬行恐惧
+- 爬行梦魇
+- 恐怖尖喙
+- 梦魇尖喙]]
 ) .. '\n󰀰 ' .. date -- Florid Postern（绚丽之门）
 api_version = 10
 dst_compatible = true
@@ -64,7 +71,10 @@ configuration_options = {
   {
     name = 'keybind',
     label = T('Toggle Key', '切换按键'),
-    hover = T('Always works so turn off with caution.', '随时都可以按键关掉暗影生物，谨慎使用。'),
+    hover = T(
+      'Key only works when wearing Bone Helm or during wereforms of Shadow Aligned Woodie.',
+      '按键仅会在装备骨头头盔或者暗影阵营伍迪变身时有效'
+    ),
     options = keys,
     default = 'KEY_DISABLED',
   },

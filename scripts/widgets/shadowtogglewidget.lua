@@ -1,22 +1,7 @@
 local Widget = require('widgets/widget')
 local ImageButton = require('widgets/imagebutton')
 local Image = require('widgets/image')
-
-Assets = {
-  Asset('ATLAS', 'images/shadowbuttonbackground.xml'),
-  Asset('IMAGE', 'images/shadowbuttonbackground.tex'),
-  Asset('ATLAS', 'images/shadowbuttonon.xml'),
-  Asset('IMAGE', 'images/shadowbuttonon.tex'),
-  Asset('ATLAS', 'images/shadowbuttonoff.xml'),
-  Asset('IMAGE', 'images/shadowbuttonoff.tex'),
-}
-
-local function IsWearingSkeletonHat()
-  local head_item = ThePlayer.replica.inventory:GetEquippedItem(EQUIPSLOTS.HEAD or EQUIPSLOTS.HAT)
-  return head_item and head_item.prefab == 'skeletonhat'
-end
-
-local function IsShadowWereWoodie() return ThePlayer:HasTag('wereplayer') and ThePlayer:HasTag('player_shadow_aligned') end
+local U = require('utils/shadowtoggle')
 
 local ShadowToggleWidget = Class(Widget, function(self, owner)
   Widget._ctor(self, 'ShadowToggleWidget')
@@ -33,7 +18,7 @@ local ShadowToggleWidget = Class(Widget, function(self, owner)
   self.bg:SetScale(0.5, 0.5, 0.5)
   self.bg:SetPosition(0, 0) --1500,120
   self.button = self.bg:AddChild(ImageButton('images/shadowbuttonoff.xml', 'shadowbuttonoff.tex'))
-  self.buttonOverlay = self.button:AddChild(Image('images/shadowbuttonon.xml', 'shadowbuttonon.tex'))
+  self.button_overlay = self.button:AddChild(Image('images/shadowbuttonon.xml', 'shadowbuttonon.tex'))
   self.bg:MoveToBack()
   self.button.focus_scale = { 1, 1, 1 }
   self.button.move_on_click = false
@@ -48,7 +33,7 @@ local ShadowToggleWidget = Class(Widget, function(self, owner)
 end)
 
 function ShadowToggleWidget:OnUpdate(dt)
-  if IsWearingSkeletonHat() or IsShadowWereWoodie() then
+  if U:IsShadowCreatureNeutral() then
     if self.should_show then self.bg:Show() end
   else
     self.bg:Hide()
@@ -58,9 +43,9 @@ function ShadowToggleWidget:OnUpdate(dt)
     end
   end
   if ThePlayer.is_shadow_enabled then
-    self.buttonOverlay:Show()
+    self.button_overlay:Show()
   else
-    self.buttonOverlay:Hide()
+    self.button_overlay:Hide()
   end
 
   local item = ThePlayer.replica.inventory:GetEquippedItem(EQUIPSLOTS.BACK or EQUIPSLOTS.BODY)

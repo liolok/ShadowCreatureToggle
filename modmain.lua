@@ -1,4 +1,5 @@
 local G = GLOBAL
+local U = require('utils/shadowtoggle')
 local ShadowToggleWidget = require('widgets/shadowtogglewidget')
 local SHADOW_CREATURES = { 'crawlinghorror', 'terrorbeak', 'crawlingnightmare', 'nightmarebeak' }
 
@@ -50,7 +51,6 @@ AddClassPostConstruct('widgets/controls', function(self)
   self.shadowtogglewidget = self:AddChild(ShadowToggleWidget(self.owner))
   self.shadowtogglewidget:MoveToBack()
   self.shadowtogglewidget.should_show = GetModConfigData('show_button_widget')
-  self.shadowtogglewidget:Hide()
 end)
 
 local function InGame() return G.ThePlayer and G.ThePlayer.HUD and not G.ThePlayer.HUD:HasInputFocus() end
@@ -58,13 +58,12 @@ local function InGame() return G.ThePlayer and G.ThePlayer.HUD and not G.ThePlay
 local function Toggle()
   local player = G.ThePlayer
   if not (player and InGame() and G.TheWorld) then return end
+  if not U:IsShadowCreatureNeutral() then return end
   player.is_shadow_enabled = not player.is_shadow_enabled
   local enabled = player.is_shadow_enabled
   if enabled == true then player:PushEvent('TurnOnShadows') end
   if enabled == false then player:PushEvent('TurnOffShadows') end
-  local talker = player.components and player.components.talker
-  if not talker then return end
-  talker:Say(S.SHADOW_CREATURES .. '\n' .. (enabled and S.SHOWN or S.HIDDEN))
+  U:TipMessage(S.SHADOW_CREATURES .. '\n' .. (enabled and S.SHOWN or S.HIDDEN))
 end
 
 local handler = nil -- config name to key event handlers
