@@ -1,7 +1,16 @@
-name = 'Shadow Creature Toggle'
-description = 'Turn off shadow creatures, by clicking button or pressing key.'
-author = 'splorange, liolok'
-version = '1.1'
+local function T(en, zh, zht) return ChooseTranslationTable({ en, zh = zh, zht = zht or zh }) end
+
+name = T('Shadow Creature Toggle', '暗影生物开关')
+author = T('splorange, liolok', 'splorange、李皓奇')
+local date = '2025-04-13'
+version = date .. '' -- for revision in same day
+description = T(
+  'Clicking button or press key to hide these shadow creatures:',
+  '点击按钮或者按键可隐藏以下暗影生物：'
+) .. '\n- ' .. T('Crawling Horror and Crawling Nightmare', '爬行恐惧、爬行梦魇') .. '\n- ' .. T(
+  'Terrorbeak and Nightmarebeak',
+  '恐怖尖喙、梦魇尖喙'
+) .. '\n󰀰 ' .. date -- Florid Postern（绚丽之门）
 api_version = 10
 dst_compatible = true
 client_only_mod = true
@@ -21,7 +30,7 @@ local keyboard = { -- from STRINGS.UI.CONTROLSSCREEN.INPUTS[1] of strings.lua, n
 }
 local numpad = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Period', 'Divide', 'Multiply', 'Minus', 'Plus' }
 local mouse = { '\238\132\130', '\238\132\131', '\238\132\132' } -- Middle Mouse Button, Mouse Button 4 and 5
-local key_disabled = { description = 'Disabled', data = 'KEY_DISABLED' }
+local key_disabled = { description = T('Disabled', '禁用'), data = 'KEY_DISABLED' }
 keys = { key_disabled }
 for i = 1, #mouse do
   keys[#keys + 1] = { description = mouse[i], data = mouse[i] }
@@ -41,18 +50,21 @@ end
 configuration_options = {
   {
     name = 'show_button_widget',
-    label = 'Show Button',
-    hover = 'Button only shows up when wearing Bone Helm or during wereforms of Shadow Aligned Woodie.',
+    label = T('Show Button', '显示按钮'),
+    hover = T(
+      'Button only shows up when wearing Bone Helm or during wereforms of Shadow Aligned Woodie.',
+      '按钮仅会在装备骨头头盔或者暗影阵营伍迪变身时显示'
+    ),
     options = {
-      { description = 'Yes', data = true },
-      { description = 'No', data = false },
+      { data = true, description = T('Yes', '是') },
+      { data = false, description = T('No', '否') },
     },
     default = true,
   },
   {
     name = 'keybind',
-    label = 'Toggle Key',
-    hover = 'Always works so turn off with caution.',
+    label = T('Toggle Key', '切换按键'),
+    hover = T('Always works so turn off with caution.', '随时都可以按键关掉暗影生物，谨慎使用。'),
     options = keys,
     default = 'KEY_DISABLED',
   },

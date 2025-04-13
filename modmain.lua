@@ -1,8 +1,12 @@
-modimport('keybind')
-
+local G = GLOBAL
 local ShadowToggleWidget = require('widgets/shadowtogglewidget')
 local SHADOW_CREATURES = { 'crawlinghorror', 'terrorbeak', 'crawlingnightmare', 'nightmarebeak' }
-local G = GLOBAL
+
+modimport('keybind') -- refine key binding UI
+modimport('languages/en') -- load translation strings with English fallback
+local lang = 'languages/' .. G.LOC.GetLocaleCode()
+if G.kleifileexists(MODROOT .. lang .. '.lua') then modimport(lang) end
+local S = G.STRINGS.SHADOW_CREATURE_TOGGLE
 
 Assets = {
   Asset('ATLAS', 'images/shadowbuttonbackground.xml'),
@@ -60,7 +64,7 @@ local function Toggle()
   if enabled == false then player:PushEvent('TurnOffShadows') end
   local talker = player.components and player.components.talker
   if not talker then return end
-  talker:Say('[Shadow Toggle]: ' .. (enabled and 'On' or 'Off'))
+  talker:Say(S.SHADOW_CREATURES .. '\n' .. (enabled and S.SHOWN or S.HIDDEN))
 end
 
 local handler = nil -- config name to key event handlers

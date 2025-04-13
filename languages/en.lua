@@ -1,0 +1,5 @@
+GLOBAL.STRINGS.SHADOW_CREATURE_TOGGLE = {
+  SHADOW_CREATURES = 'Shadow Creatures',
+  SHOWN = 'Shown',
+  HIDDEN = 'Hidden',
+}
