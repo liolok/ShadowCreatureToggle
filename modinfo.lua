@@ -5,15 +5,13 @@ author = T('splorange, liolok', 'splorange、李皓奇')
 local date = '2025-05-04'
 version = date .. '' -- for revision in same day
 description = T(
-  [[(When wearing Bone Helm, or during wereforms of Shadow Aligned Woodie)
-Clicking button or press key to hide these shadow creatures:
+  [[When wearing Bone Helm, or during wereforms of Shadow Aligned Woodie, click button or press key to hide these shadow creatures:
 - Crawling Horror
 - Crawling Nightmare
 - Terrorbeak
 - Nightmarebeak
 - Lurking Nightmare]],
-  [[（在装备骨头头盔、或者暗影阵营伍迪变身时）
-点击按钮或者按键可隐藏以下暗影生物：
+  [[在装备骨头头盔、或者暗影阵营伍迪变身时，点击按钮或者按键可隐藏以下暗影生物：
 - 爬行恐惧
 - 爬行梦魇
 - 恐怖尖喙
