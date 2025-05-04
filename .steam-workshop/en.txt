@@ -1,0 +1,19 @@
+When wearing Bone Helm, or during wereforms of Shadow Aligned Woodie, click button or press key to hide these shadow creatures:
+[list]
+[*]Crawling Horror
+[*]Crawling Nightmare
+[*]Terrorbeak
+[*]Nightmarebeak
+[*]Lurking Nightmare
+[/list]
+
+Changes to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2976382468]original mod[/url]:
+[olist]
+[*]Add support for wereforms of  Shadow Aligned Woodie
+[*]Add support for Lurking Nightmare
+[*]Fix hiding other shadow creatures like Parasitic Shadeling (on Nightmare Werepig) and Unseen Hand (by Ancient Fuelweaver)
+[/olist]
+
+[hr][/hr]
+
+[url=https://github.com/liolok/ShadowCreatureToggle]Source Code[/url]
