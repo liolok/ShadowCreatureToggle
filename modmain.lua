@@ -1,14 +1,3 @@
-local G = GLOBAL
-local U = require('utils/shadowtoggle')
-local ShadowToggleWidget = require('widgets/shadowtogglewidget')
-local SHADOW_CREATURES = { 'crawlinghorror', 'crawlingnightmare', 'terrorbeak', 'nightmarebeak', 'ruinsnightmare' }
-
-modimport('keybind') -- refine key binding UI
-modimport('languages/en') -- load translation strings with English fallback
-local lang = 'languages/' .. G.LOC.GetLocaleCode()
-if G.kleifileexists(MODROOT .. lang .. '.lua') then modimport(lang) end
-local S = G.STRINGS.SHADOW_CREATURE_TOGGLE
-
 Assets = {
   Asset('ATLAS', 'images/shadowbuttonbackground.xml'),
   Asset('IMAGE', 'images/shadowbuttonbackground.tex'),
@@ -18,31 +7,28 @@ Assets = {
   Asset('IMAGE', 'images/shadowbuttonoff.tex'),
 }
 
--- shadows constantly change transparency, so we have to overwrite some functions so they stay invisible when they should
+local G = GLOBAL
+modimport('keybind') -- refine key binding UI
+modimport('languages/en') -- load translation strings with English fallback
+local lang = 'languages/' .. G.LOC.GetLocaleCode()
+if G.kleifileexists(MODROOT .. lang .. '.lua') then modimport(lang) end
+local S = G.STRINGS.SHADOW_CREATURE_TOGGLE
+local ShadowToggleWidget = require('widgets/shadowtogglewidget')
+local U = require('utils/shadowtoggle')
+
+local SHADOW_CREATURES = { 'crawlinghorror', 'crawlingnightmare', 'terrorbeak', 'nightmarebeak', 'ruinsnightmare' }
+local SHOULD_HIDE = {}
+for _, prefab in ipairs(SHADOW_CREATURES) do
+  SHOULD_HIDE[prefab] = true
+end
+
+-- splorange: shadows constantly change transparency, so we have to overwrite some functions so they stay invisible when they should
 AddClassPostConstruct('components/transparentonsanity', function(self)
-  local function PushAlpha(self, alpha, most_alpha)
-    if G.ThePlayer ~= nil and G.ThePlayer.is_shadow_enabled == false then
-      self.inst.AnimState:OverrideMultColour(1, 1, 1, 0)
-      self.inst:Hide()
-    else
-      self.inst.AnimState:OverrideMultColour(1, 1, 1, alpha)
-      if self.inst.SoundEmitter ~= nil then self.inst.SoundEmitter:OverrideVolumeMultiplier(alpha / most_alpha) end
-      if self.onalphachangedfn ~= nil then self.onalphachangedfn(self.inst, alpha, most_alpha) end
-    end
-  end
-
-  function self:DoUpdate(dt, force)
-    self.offset = self.offset + dt
-    self.target_alpha = self:CalcaulteTargetAlpha()
-
-    if force then
-      self.alpha = self.target_alpha
-      PushAlpha(self, self.alpha, self.most_alpha)
-    elseif self.alpha ~= self.target_alpha then
-      self.alpha = self.alpha > self.target_alpha and math.max(self.target_alpha, self.alpha - dt)
-        or math.min(self.target_alpha, self.alpha + dt)
-      PushAlpha(self, self.alpha, self.most_alpha)
-    end
+  local OldCalculateTargetAlpha = self.CalcaulteTargetAlpha
+  self.CalcaulteTargetAlpha = function(self) -- yes, reserve typo to override.
+    local is_shadow_disabled = G.ThePlayer and G.ThePlayer.is_shadow_enabled == false
+    local should_hide = self.inst.prefab and SHOULD_HIDE[self.inst.prefab]
+    return (is_shadow_disabled and should_hide) and 0 or OldCalculateTargetAlpha(self)
   end
 end)
 
@@ -90,7 +76,7 @@ end
 
 for _, prefab in ipairs(SHADOW_CREATURES) do
   AddPrefabPostInit(prefab, function(inst)
-    inst:DoTaskInTime(0, function() --shadows might be initialized before the player
+    inst:DoTaskInTime(0, function() -- splorange: shadows might be initialized before the player
       if G.ThePlayer.is_shadow_enabled == false then
         inst.AnimState:OverrideMultColour(1, 1, 1, 0)
         inst:Hide()
