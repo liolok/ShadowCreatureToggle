@@ -12,7 +12,9 @@ Changes to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=297638246
 [*]Add support for wereforms of  Shadow Aligned Woodie
 [*]Add support for Lurking Nightmare
 [*]Fix hiding other shadow creatures like Parasitic Shadeling (on Nightmare Werepig) and Unseen Hand (by Ancient Fuelweaver)
+[*]Fix newly spawned shadow creatures could be targeted when hidden
 [*]After shadow creatures hidden, show a white circle under them to indicate position. (Configurable)
+[*]Also mute shadow creatures when hide them
 [/olist]
 
 [hr][/hr]
