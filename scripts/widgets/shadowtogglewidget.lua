@@ -26,9 +26,8 @@ local ShadowToggleWidget = Class(Widget, function(self, owner)
   self:StartUpdating()
 
   self.button:SetOnClick(function()
-    ThePlayer.is_shadow_enabled = not ThePlayer.is_shadow_enabled
-    if ThePlayer.is_shadow_enabled == true then ThePlayer:PushEvent('TurnOnShadows') end
-    if ThePlayer.is_shadow_enabled == false then ThePlayer:PushEvent('TurnOffShadows') end
+    ThePlayer.need_hide_shadow = not ThePlayer.need_hide_shadow
+    ThePlayer:PushEvent(ThePlayer.need_hide_shadow and 'HideShadow' or 'ShowShadow')
   end)
 end)
 
@@ -37,15 +36,15 @@ function ShadowToggleWidget:OnUpdate(dt)
     if self.should_show then self.bg:Show() end
   else
     self.bg:Hide()
-    if ThePlayer.is_shadow_enabled == false then
-      ThePlayer.is_shadow_enabled = true
-      ThePlayer:PushEvent('TurnOnShadows')
+    if ThePlayer.need_hide_shadow then
+      ThePlayer.need_hide_shadow = false
+      ThePlayer:PushEvent('ShowShadow')
     end
   end
-  if ThePlayer.is_shadow_enabled then
-    self.button_overlay:Show()
-  else
+  if ThePlayer.need_hide_shadow then
     self.button_overlay:Hide()
+  else
+    self.button_overlay:Show()
   end
 
   local item = ThePlayer.replica.inventory:GetEquippedItem(EQUIPSLOTS.BACK or EQUIPSLOTS.BODY)

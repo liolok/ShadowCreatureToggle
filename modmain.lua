@@ -26,14 +26,23 @@ end
 AddClassPostConstruct('components/transparentonsanity', function(self)
   local OldCalculateTargetAlpha = self.CalcaulteTargetAlpha
   self.CalcaulteTargetAlpha = function(self) -- yes, reserve typo to override.
-    local is_shadow_disabled = G.ThePlayer and G.ThePlayer.is_shadow_enabled == false
+    local need_hide = G.ThePlayer and G.ThePlayer.need_hide_shadow
     local should_hide = self.inst.prefab and SHOULD_HIDE[self.inst.prefab]
-    return (is_shadow_disabled and should_hide) and 0 or OldCalculateTargetAlpha(self)
+    return (need_hide and should_hide) and 0 or OldCalculateTargetAlpha(self)
+  end
+end)
+
+AddClassPostConstruct('components/combat_replica', function(self)
+  local OldIsAlly = self.IsAlly
+  self.IsAlly = function(self, guy, ...)
+    local need_hide = G.ThePlayer and G.ThePlayer.need_hide_shadow
+    local should_hide = guy.prefab and SHOULD_HIDE[guy.prefab]
+    return (need_hide and should_hide) and true or OldIsAlly(self, guy, ...)
   end
 end)
 
 AddClassPostConstruct('widgets/controls', function(self)
-  G.ThePlayer.is_shadow_enabled = true
+  G.ThePlayer.need_hide_shadow = false
   self.shadowtogglewidget = self:AddChild(ShadowToggleWidget(self.owner))
   self.shadowtogglewidget:MoveToBack()
   self.shadowtogglewidget.should_show = GetModConfigData('show_button_widget')
@@ -45,11 +54,9 @@ local function Toggle()
   local player = G.ThePlayer
   if not (player and InGame() and G.TheWorld) then return end
   if not U:IsShadowCreatureNeutral() then return end
-  player.is_shadow_enabled = not player.is_shadow_enabled
-  local enabled = player.is_shadow_enabled
-  if enabled == true then player:PushEvent('TurnOnShadows') end
-  if enabled == false then player:PushEvent('TurnOffShadows') end
-  U:TipMessage(S.SHADOW_CREATURES .. '\n' .. (enabled and S.SHOWN or S.HIDDEN))
+  player.need_hide_shadow = not player.need_hide_shadow
+  player:PushEvent(player.need_hide_shadow and 'HideShadow' or 'ShowShadow')
+  U:TipMessage(S.SHADOW_CREATURES .. '\n' .. (player.need_hide_shadow and S.HIDDEN or S.SHOWN))
 end
 
 local handler = nil -- config name to key event handlers
@@ -74,21 +81,44 @@ function KeyBind(_, key)
   end
 end
 
-for _, prefab in ipairs(SHADOW_CREATURES) do
-  AddPrefabPostInit(prefab, function(inst)
-    inst:DoTaskInTime(0, function() -- splorange: shadows might be initialized before the player
-      if G.ThePlayer.is_shadow_enabled == false then
-        inst.AnimState:OverrideMultColour(1, 1, 1, 0)
-        inst:Hide()
-      end
-      G.ThePlayer:ListenForEvent('TurnOnShadows', function()
-        inst.AnimState:OverrideMultColour(1, 1, 1, 0.4)
-        inst:Show()
-      end)
-      G.ThePlayer:ListenForEvent('TurnOffShadows', function()
-        inst.AnimState:OverrideMultColour(1, 1, 1, 0)
-        inst:Hide()
-      end)
+local function CreateCircle(inst) -- OnEnableHelper(), prefabs/winona_battery_high.lua
+  local circle = G.CreateEntity()
+  circle.entity:SetParent(inst.entity)
+  local tf = circle.entity:AddTransform()
+  local as = circle.entity:AddAnimState()
+
+  local x, y, z = inst.Transform:GetScale() -- credit: Huxi, 3161117403/scripts/prefabs/hrange.lua
+  tf:SetScale(1 / x, 1 / y, 1 / z) -- fight against parent's scale, be absolute.
+  -- as:SetScale(radius / 9.7, radius / 9.7) -- scale by catapult texture size
+
+  -- credit: CarlZalph, https://forums.kleientertainment.com/forums/topic/69594-solved-how-to-make-character-glow-a-certain-color/#comment-804165
+  as:SetMultColour(1, 1, 1, 1) -- erase original color
+  as:SetAddColour(1, 1, 1, 1)
+
+  circle.entity:SetCanSleep(false)
+  circle.persists = false
+  circle:AddTag('CLASSIFIED')
+  circle:AddTag('NOCLICK')
+  circle:AddTag('SHADOW_CREATURE_TOGGLE')
+  as:SetBank('winona_battery_placement')
+  as:SetBuild('winona_battery_placement')
+  as:PlayAnimation('idle')
+  as:Hide('outer')
+  as:SetLightOverride(1)
+  as:SetOrientation(G.ANIM_ORIENTATION.OnGround)
+  as:SetLayer(G.LAYER_BACKGROUND)
+  as:SetSortOrder(1)
+
+  if not G.ThePlayer.need_hide_shadow then circle:Hide() end
+  G.ThePlayer:ListenForEvent('ShowShadow', function() circle:Hide() end)
+  G.ThePlayer:ListenForEvent('HideShadow', function() circle:Show() end)
+  return circle
+end
+
+if GetModConfigData('add_hidden_indicator') then
+  for _, prefab in ipairs(SHADOW_CREATURES) do
+    AddPrefabPostInit(prefab, function(inst) -- splorange: shadows might be initialized before the player
+      inst:DoTaskInTime(0, function() inst.hidden_indicator = CreateCircle(inst) end)
     end)
-  end)
+  end
 end

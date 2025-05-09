@@ -78,4 +78,17 @@ configuration_options = {
     options = keys,
     default = 'KEY_DISABLED',
   },
+  {
+    name = 'add_hidden_indicator',
+    label = T('Add Hidden Indicator', '添加隐藏指示器'),
+    hover = T(
+      'After shadow creatures hidden, show a white circle under them to indicate position.',
+      '隐藏暗影生物之后，在它们脚下显示一个白圈以指示位置。'
+    ),
+    options = {
+      { data = true, description = T('Yes', '是') },
+      { data = false, description = T('No', '否') },
+    },
+    default = true,
+  },
 }
