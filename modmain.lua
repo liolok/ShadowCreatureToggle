@@ -17,6 +17,10 @@ local ShadowToggleWidget = require('widgets/shadowtogglewidget')
 local U = require('utils/shadowtoggle')
 
 local SHADOW_CREATURES = { 'crawlinghorror', 'crawlingnightmare', 'terrorbeak', 'nightmarebeak', 'ruinsnightmare' }
+local IS_ON_SANITY = {}
+for _, prefab in ipairs({ 'crawlinghorror', 'terrorbeak'}) do
+  IS_ON_SANITY[prefab] = true
+end
 local SHOULD_HIDE = {}
 for _, prefab in ipairs(SHADOW_CREATURES) do
   SHOULD_HIDE[prefab] = true
@@ -115,10 +119,25 @@ local function CreateCircle(inst) -- OnEnableHelper(), prefabs/winona_battery_hi
   return circle
 end
 
-if GetModConfigData('add_hidden_indicator') then
-  for _, prefab in ipairs(SHADOW_CREATURES) do
-    AddPrefabPostInit(prefab, function(inst) -- splorange: shadows might be initialized before the player
-      inst:DoTaskInTime(0, function() inst.hidden_indicator = CreateCircle(inst) end)
+local function Hide(inst)
+  if inst.AnimState then inst.AnimState:OverrideMultColour(1, 1, 1, 0) end
+  if inst.SoundEmitter then inst.SoundEmitter:OverrideVolumeMultiplier(0) end
+end
+
+local function Show(inst)
+  if inst.AnimState then inst.AnimState:OverrideMultColour(1, 1, 1, 0.4) end
+  if inst.SoundEmitter then inst.SoundEmitter:OverrideVolumeMultiplier(1) end
+end
+
+local should_add_indicator = GetModConfigData('add_hidden_indicator')
+for _, prefab in ipairs(SHADOW_CREATURES) do
+  AddPrefabPostInit(prefab, function(inst)
+    inst:DoTaskInTime(0, function() -- splorange: shadows might be initialized before the player
+      if should_add_indicator then inst.hidden_indicator = CreateCircle(inst) end
+      if IS_ON_SANITY[inst.prefab] then return end
+      if G.ThePlayer.need_hide_shadow then Hide(inst) end
+      G.ThePlayer:ListenForEvent('HideShadow', function() Hide(inst) end)
+      G.ThePlayer:ListenForEvent('ShowShadow', function() Show(inst) end)
     end)
-  end
+  end)
 end
