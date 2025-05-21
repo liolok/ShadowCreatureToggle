@@ -52,8 +52,21 @@ local function HookShadowCreature(inst)
   end)
 end
 
+local function Save(file_name, data) return SavePersistentString(file_name, DataDumper(data, nil, true)) end
+local function Load(file_name)
+  local result
+  TheSim:GetPersistentString(file_name, function(load_success, str)
+    if not (load_success and #str > 0) then return end
+    local run_success, data = RunInSandboxSafe(str)
+    if run_success then result = data end
+  end)
+  return result
+end
+
 return {
   IsHidden = IsHidden,
   ToggleShadowCreature = ToggleShadowCreature,
   HookShadowCreature = HookShadowCreature,
+  Save = Save,
+  Load = Load,
 }

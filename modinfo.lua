@@ -59,8 +59,8 @@ configuration_options = {
     name = 'show_button_widget',
     label = T('Show Button', '显示按钮'),
     hover = T(
-      'Button only shows up when wearing Bone Helm or during wereforms of Shadow Aligned Woodie.',
-      '按钮仅会在装备骨头头盔或者暗影阵营伍迪变身时显示'
+      'Button only shows up when wearing Bone Helm or during wereforms of Shadow Aligned Woodie. Drag with  to customize position.',
+      '按钮仅会在装备骨头头盔或者暗影阵营伍迪变身时显示。使用  拖拽可以定制位置。'
     ),
     options = {
       { data = true, description = T('Yes', '是') },

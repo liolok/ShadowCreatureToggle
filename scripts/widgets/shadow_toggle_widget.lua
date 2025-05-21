@@ -8,9 +8,8 @@ local ShadowToggleWidget = Class(Widget, function(self)
   Widget._ctor(self, 'ShadowToggleWidget')
 
   self.root = self:AddChild(Widget('ROOT'))
-  self.root:SetVAnchor(ANCHOR_BOTTOM)
-  self.root:SetHAnchor(ANCHOR_RIGHT)
-  self.root:SetPosition(-220, 50)
+  self.root:SetScale(0.8, 0.8)
+  self.root:SetPosition(50, 50)
   self.root:MoveToBack()
   self.bg = self.root:AddChild(Image('images/background.xml', 'background.tex'))
   self.button = self.bg:AddChild(ImageButton('images/shadow_off.xml', 'shadow_off.tex'))
@@ -19,6 +18,19 @@ local ShadowToggleWidget = Class(Widget, function(self)
   self.button.scale_on_focus = false
   self.button.move_on_click = false
   self.button:SetOnClick(Util.ToggleShadowCreature)
+
+  local FILE_NAME = 'ShadowCreatureToggleButtonPosition'
+  local p = Util.Load(FILE_NAME)
+  if p and p.x and p.y then self.root:SetPosition(p.x, p.y) end
+  self.root.OnMouseButton = function(_self, button, down)
+    if button == MOUSEBUTTON_RIGHT and down then
+      _self:FollowMouse()
+    elseif button == MOUSEBUTTON_RIGHT then
+      _self:StopFollowMouse()
+      _self:SetPosition(TheInput:GetScreenPosition())
+      Util.Save(FILE_NAME, TheInput:GetScreenPosition())
+    end
+  end
 
   self:StartUpdating()
 end)

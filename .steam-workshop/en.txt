@@ -15,6 +15,7 @@ Changes to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=297638246
 [*]Fix newly spawned shadow creatures could be targeted when hidden
 [*]After shadow creatures hidden, show a white circle under them to indicate position. (Configurable)
 [*]Also mute shadow creatures when hide them
+[*]Button widget position is now customizable through Right Mouse Button dragging.
 [/olist]
 
 [hr][/hr]
