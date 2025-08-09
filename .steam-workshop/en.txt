@@ -4,13 +4,14 @@ When wearing Bone Helm, or during wereforms of Shadow Aligned Woodie, click butt
 [*]Crawling Nightmare
 [*]Terrorbeak
 [*]Nightmarebeak
+[*]Terrorclaw
 [*]Lurking Nightmare
 [/list]
 
 Changes to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2976382468]original mod[/url]:
 [olist]
 [*]Add support for wereforms of  Shadow Aligned Woodie
-[*]Add support for Lurking Nightmare
+[*]Add support for Terrorclaw and Lurking Nightmare
 [*]Fix hiding other shadow creatures like Parasitic Shadeling (on Nightmare Werepig) and Unseen Hand (by Ancient Fuelweaver)
 [*]Fix newly spawned shadow creatures could be targeted when hidden
 [*]After shadow creatures hidden, show a white circle under them to indicate position. (Configurable)
@@ -19,5 +20,4 @@ Changes to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=297638246
 [/olist]
 
 [hr][/hr]
-
 [url=https://github.com/liolok/ShadowCreatureToggle]Source Code[/url]

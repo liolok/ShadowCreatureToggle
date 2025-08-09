@@ -10,12 +10,14 @@ description = T(
 - Crawling Nightmare
 - Terrorbeak
 - Nightmarebeak
+- Terrorclaw
 - Lurking Nightmare]],
   [[在装备骨头头盔、或者暗影阵营伍迪变身时，点击按钮或者按键可隐藏以下暗影生物：
 - 爬行恐惧
 - 爬行梦魇
 - 恐怖尖喙
 - 梦魇尖喙
+- 恐怖利爪
 - 潜伏梦魇]]
 ) .. '\n󰀰 ' .. date -- Florid Postern（绚丽之门）
 api_version = 10

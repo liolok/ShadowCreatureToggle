@@ -1,4 +1,4 @@
-local SHADOW_CREATURES = { 'crawlinghorror', 'crawlingnightmare', 'terrorbeak', 'nightmarebeak', 'ruinsnightmare' }
+local SHADOW_CREATURES = { 'crawlinghorror', 'crawlingnightmare', 'terrorbeak', 'nightmarebeak', 'oceanhorror', 'ruinsnightmare' }
 
 local should_hide = {}
 for _, prefab in ipairs(SHADOW_CREATURES) do
@@ -6,7 +6,7 @@ for _, prefab in ipairs(SHADOW_CREATURES) do
 end
 
 local is_on_sanity = {}
-for _, prefab in ipairs({ 'crawlinghorror', 'terrorbeak' }) do
+for _, prefab in ipairs({ 'crawlinghorror', 'terrorbeak', 'oceanhorror' }) do
   is_on_sanity[prefab] = true
 end
 
