@@ -14,6 +14,7 @@ TUNING.SHADOW_CREATURE_TOGGLE = {
   SHADOW_CREATURES = SHADOW_CREATURES,
   SHOULD_HIDE = should_hide,
   IS_ON_SANITY = is_on_sanity,
+  AUTO_HIDE = GetModConfigData('auto_hide'),
   SHOW_BUTTON_WIDGET = GetModConfigData('show_button_widget'),
   ADD_HIDDEN_INDICATOR = GetModConfigData('add_hidden_indicator'),
 }

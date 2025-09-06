@@ -58,6 +58,19 @@ end
 
 configuration_options = {
   {
+    name = 'auto_hide',
+    label = T('Auto Hide', '自动隐藏'),
+    hover = T(
+      'Hide shadow creatures automatically when wearing Bone Helm or during wereforms of Shadow Aligned Woodie.',
+      '在装备骨头头盔或者暗影阵营伍迪变身时，自动隐藏暗影生物。'
+    ),
+    options = {
+      { data = true, description = T('Yes', '是') },
+      { data = false, description = T('No', '否') },
+    },
+    default = false,
+  },
+  {
     name = 'show_button_widget',
     label = T('Show Button', '显示按钮'),
     hover = T(

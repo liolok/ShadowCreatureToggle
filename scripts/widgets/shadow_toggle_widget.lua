@@ -40,6 +40,10 @@ function ShadowToggleWidget:OnUpdate()
 
   if ThePlayer:HasTag('shadowdominance') then
     if TUNING.SHADOW_CREATURE_TOGGLE.SHOW_BUTTON_WIDGET then self.root:Show() end
+    if TUNING.SHADOW_CREATURE_TOGGLE.AUTO_HIDE then
+      ThePlayer.need_hide_shadow = true
+      ThePlayer:PushEvent('HideShadow')
+    end
   else
     self.root:Hide()
     ThePlayer.need_hide_shadow = false
