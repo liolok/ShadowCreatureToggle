@@ -2,7 +2,7 @@ local function T(en, zh, zht) return ChooseTranslationTable({ en, zh = zh, zht =
 
 name = T('Shadow Creature Toggle', '暗影生物开关')
 author = T('splorange, liolok', 'splorange、李皓奇')
-local date = '2025-08-09'
+local date = '2025-09-07'
 version = date .. '' -- for revision in same day
 description = T(
   [[When wearing Bone Helm, or during wereforms of Shadow Aligned Woodie, click button or press key to hide these shadow creatures:
